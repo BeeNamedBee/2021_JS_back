@@ -18,8 +18,6 @@ async function getMe(req, res, next) {
 
 async function updateMe(req, res, next) {
 	const check = await User.findOne({ where: { id: req.token.userId } });
-	if (!check)
-		throw new ErrorResponse('No such user', 404);
 	await check.update(req.body);
 	res.status(200).json(check);
 }

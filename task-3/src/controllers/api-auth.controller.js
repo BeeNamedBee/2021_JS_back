@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const { Op } = require('sequelize');
 const ErrorResponse = require('../classes/error-response');
 const User = require('../database/models/User.model.js');
 const Token = require('../database/models/Token.model');
@@ -18,21 +19,23 @@ function makeid(length) {
 }
 
 function initRoutes() {
-	router.post('/register', asyncHandler(register));
+	router.post('/registration', asyncHandler(register));
 	router.post('/login', asyncHandler(auth));
 }
 
 async function register(req, res, next) {
 	const check = await User.findOne({
 		where: {
-			email: req.body.email,
-			login: req.body.login,
+			[Op.or]:{
+				email: req.body.email,
+				login: req.body.login,
+			}
 		},
 	});
 	if (check)
 		throw new ErrorResponse('Email or login in use', 400);
 	const user = await User.create(req.body);
-	res.status(200).json({ user });
+	res.status(200).json(user);
 }
 
 async function auth(req, res, next) {
@@ -44,9 +47,9 @@ async function auth(req, res, next) {
 	});
 	if (!check)
 		throw new ErrorResponse('No such user', 404)
-	const tok = makeid(192);
-	await Token.create({ userId: check.id, value: tok});
-	res.status(200).json({ token: tok });
+	const token = makeid(192);
+	await Token.create({ userId: check.id, value: token});
+	res.status(200).json({ token: token });
 }
 
 initRoutes();

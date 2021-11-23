@@ -31,10 +31,10 @@ const requireToken = async (req, res, next) => {
 	const tok = req.get('x-access-token');
 	console.log(`TOKEN: ${tok}`);
 	if (!tok)
-		throw new ErrorResponse('No token provided', 403);
+		throw new ErrorResponse('No token send', 400);
 	const dbtok = await Token.findOne({ where: {value: tok } });
 	if (!dbtok)
-		throw new ErrorResponse('Invalid token', 403);
+		throw new ErrorResponse('Invalid token', 401);
 	req.token = dbtok;
 	next();
 };

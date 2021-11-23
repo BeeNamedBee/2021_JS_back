@@ -46,7 +46,7 @@ async function createToDo(req, res, next) {
 	if (!td)
 		throw new ErrorResponse('Internal error', 500);
 	
-	res.sendStatus(200);
+    res.status(200).json(td);
 }
 
 async function deleteToDos(req, res, next) {
@@ -66,7 +66,7 @@ async function updateToDoById(req, res, next) {
 		throw new ErrorResponse('No todo with this id', 404);
 
 	await todo.update(req.body);
-	res.sendStatus(200);
+    res.status(200).json(todo);
 }
 
 async function deleteToDoById(req, res, next) {
